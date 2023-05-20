@@ -16,10 +16,5 @@
   import TaskItem from 'components/Tasks/TaskItem.vue';
 
   const store = useTasksStore();
-
   const { tasks } = store;
-
-  // const toggleCompleted = (task: Task) => {
-  //   console.log(task);
-  // };
 </script>

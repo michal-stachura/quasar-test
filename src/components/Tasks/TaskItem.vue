@@ -9,7 +9,11 @@
     }"
   >
     <q-item-section side top>
-      <q-checkbox v-model="completed" @input="toggleCompleted" />
+      <q-checkbox
+        v-model="completed"
+        @input="toggleCompleted"
+        class="no-pointer-events"
+      />
     </q-item-section>
     <q-item-section>
       <q-item-label :class="{ 'text-strike': task.completed }">{{
@@ -31,6 +35,16 @@
         </div>
       </div>
     </q-item-section>
+    <q-item-section side>
+      <q-btn
+        @click.stop="promptToDelete(taskId)"
+        flat
+        round
+        dense
+        color="negative"
+        icon="delete"
+      />
+    </q-item-section>
   </q-item>
 </template>
 
@@ -38,10 +52,11 @@
   import { ref, PropType } from 'vue';
   import { Task } from '../../types/Task';
   import { useTasksStore } from '../../stores/store-tasks';
+  import { useQuasar } from 'quasar';
 
   const store = useTasksStore();
-
-  const { toggleTask } = store;
+  const { toggleTask, deleteTask } = store;
+  const $q = useQuasar();
 
   const props = defineProps({
     task: {
@@ -53,11 +68,24 @@
       required: true
     }
   });
+  const completed = ref(props.task.completed);
 
   const toggleCompleted = () => {
     completed.value = !completed.value;
     toggleTask(props.taskId);
   };
 
-  const completed = ref(props.task.completed);
+  const promptToDelete = (taskId: string) => {
+    $q.dialog({
+      title: 'Confirm',
+      message: `Would you like to remove task: ${props.task.name}?`,
+      ok: {
+        color: 'positive'
+      },
+      cancel: true,
+      persistent: true
+    }).onOk(() => {
+      deleteTask(taskId);
+    });
+  };
 </script>

@@ -28,5 +28,9 @@ export const useTasksStore = defineStore('tasks', () => {
     tasks.value[taskId].completed = !tasks.value[taskId].completed;
   }
 
-  return { tasks, toggleTask };
+  function deleteTask(taskId: string): void {
+    delete tasks.value[taskId];
+  }
+
+  return { tasks, toggleTask, deleteTask };
 });
