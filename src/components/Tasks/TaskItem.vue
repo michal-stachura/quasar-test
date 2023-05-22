@@ -36,15 +36,33 @@
       </div>
     </q-item-section>
     <q-item-section side>
-      <q-btn
-        @click.stop="promptToDelete(taskId)"
-        flat
-        round
-        dense
-        color="negative"
-        icon="delete"
-      />
+      <div class="row">
+        <q-btn
+          @click.stop="showEditTask = true"
+          flat
+          round
+          dense
+          color="primary"
+          icon="edit"
+        />
+        <q-btn
+          @click.stop="promptToDelete(taskId)"
+          flat
+          round
+          dense
+          color="negative"
+          icon="delete"
+        />
+      </div>
     </q-item-section>
+
+    <q-dialog v-model="showEditTask">
+      <edit-task
+        :task="task"
+        :id="taskId"
+        @close-popup="showEditTask = false"
+      />
+    </q-dialog>
   </q-item>
 </template>
 
@@ -53,6 +71,7 @@
   import { Task } from '../../types/Task';
   import { useTasksStore } from '../../stores/store-tasks';
   import { useQuasar } from 'quasar';
+  import EditTask from 'components/Tasks/Modals/EditTask.vue';
 
   const store = useTasksStore();
   const { toggleTask, deleteTask } = store;
@@ -69,6 +88,7 @@
     }
   });
   const completed = ref(props.task.completed);
+  const showEditTask = ref<boolean>(false);
 
   const toggleCompleted = () => {
     completed.value = !completed.value;

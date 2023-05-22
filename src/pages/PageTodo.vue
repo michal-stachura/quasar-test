@@ -24,7 +24,7 @@
     </div>
 
     <q-dialog v-model="showAddTask">
-      <AddTask @close-popup="showAddTask = false" />
+      <add-task @close-popup="showAddTask = false" />
     </q-dialog>
   </q-page>
 </template>
@@ -33,9 +33,9 @@
   import { ref } from 'vue';
   import { useTasksStore } from '../stores/store-tasks';
   import TaskItem from 'components/Tasks/TaskItem.vue';
-  import AddTask from '../components/Tasks/Modals/AddTask.vue';
+  import AddTask from 'components/Tasks/Modals/AddTask.vue';
 
   const store = useTasksStore();
-  const showAddTask = ref(false);
+  const showAddTask = ref<boolean>(false);
   const { tasks } = store;
 </script>

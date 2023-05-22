@@ -1,7 +1,7 @@
 <template>
   <q-card>
     <q-form @submit="onSubmit">
-      <modal-header>Add task</modal-header>
+      <modal-header>Edit task</modal-header>
 
       <q-card-section class="q-pt-none">
         <div class="row q-mb-sm">
@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-  import { reactive } from 'vue';
+  import { PropType, reactive } from 'vue';
   import { useQuasar } from 'quasar';
   import { useTasksStore } from '../../../stores/store-tasks';
   import ModalHeader from './Shared/ModalHeader.vue';
@@ -44,17 +44,29 @@
   import ModalTaskDueDate from './Shared/ModalTaskDueDate.vue';
   import ModalTaskDueTime from './Shared/ModalTaskDueTime.vue';
   import ModalButtons from './Shared/ModalButtons.vue';
+  import { Task } from 'src/types/Task';
 
   const store = useTasksStore();
-  const { addTask } = store;
+  const { editTask } = store;
   const $q = useQuasar();
   const emit = defineEmits(['close-popup']);
 
+  const props = defineProps({
+    task: {
+      type: Object as PropType<Task>,
+      required: true
+    },
+    id: {
+      type: String as PropType<string>,
+      required: true
+    }
+  });
+
   const taskToSubmit = reactive({
-    name: '',
-    dueDate: '',
-    dueTime: '',
-    completed: false
+    name: props.task.name,
+    dueDate: props.task.dueDate,
+    dueTime: props.task.dueTime,
+    completed: props.task.completed
   });
 
   const clearDate = () => {
@@ -84,12 +96,12 @@
   };
 
   const submitTask = () => {
-    addTask(taskToSubmit);
+    editTask(props.id, taskToSubmit);
     $q.notify({
       color: 'green-4',
       textColor: 'white',
       icon: 'cloud_done',
-      message: 'Task added'
+      message: 'Task changed'
     });
     emit('close-popup');
   };
