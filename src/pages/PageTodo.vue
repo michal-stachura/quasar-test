@@ -1,8 +1,20 @@
 <template>
   <q-page padding>
-    <no-tasks v-if="!Object.keys(tasksTodo()).length" />
-    <TasksTodo v-else />
-    <tasks-completed />
+    <div class="q-mb-lg">
+      <search-task />
+    </div>
+    <p
+      v-if="
+        !Object.keys(tasksTodo()).length &&
+        !Object.keys(tasksCompleted()).length &&
+        search
+      "
+    >
+      No search results
+    </p>
+    <no-tasks v-if="!Object.keys(tasksTodo()).length && !search" />
+    <TasksTodo v-if="Object.keys(tasksTodo()).length" />
+    <TasksCompleted />
 
     <div class="absolute-bottom-right q-mb-sm q-mr-sm">
       <q-btn
@@ -22,13 +34,15 @@
 
 <script setup lang="ts">
   import { storeToRefs } from 'pinia';
+  import { useTasksStore } from 'src/stores/store-tasks';
   import AddTask from 'components/Tasks/Modals/AddTask.vue';
   import TasksTodo from 'components/Tasks/TasksTodo.vue';
   import TasksCompleted from 'components/Tasks/TasksCompleted.vue';
-  import NoTasks from 'src/components/Tasks/NoTasks.vue';
-  import { useTasksStore } from 'src/stores/store-tasks';
-  const store = useTasksStore();
-  const { tasksTodo, setShowAddTask } = store;
+  import NoTasks from 'components/Tasks/NoTasks.vue';
+  import SearchTask from 'components/Tasks/Tools/SearchTask.vue';
 
-  const { showModalAddTask } = storeToRefs(store);
+  const store = useTasksStore();
+  const { tasksTodo, tasksCompleted, setShowAddTask } = store;
+
+  const { showModalAddTask, search } = storeToRefs(store);
 </script>

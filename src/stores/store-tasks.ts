@@ -24,28 +24,48 @@ export const useTasksStore = defineStore('tasks', () => {
     }
   });
 
-  const showModalAddTask = ref(false);
+  const showModalAddTask = ref<boolean>(false);
+
+  const search = ref<string>('');
 
   const setShowAddTask = (trueOrFalse: boolean): void => {
     showModalAddTask.value = trueOrFalse;
   };
 
   const tasksTodo = () => {
-    const filteredTasks: Record<string, Task> = {};
-
-    for (const taskId in tasks.value) {
-      if (tasks.value[taskId].completed === false) {
-        filteredTasks[taskId] = tasks.value[taskId];
+    const filteredTasks: Record<string, Task> = tasksFiltered();
+    const tasks: Record<string, Task> = {};
+    for (const taskId in filteredTasks) {
+      if (filteredTasks[taskId].completed === false) {
+        tasks[taskId] = filteredTasks[taskId];
       }
     }
-    return filteredTasks;
+    return tasks;
   };
 
   const tasksCompleted = () => {
+    const filteredTasks: Record<string, Task> = tasksFiltered();
+
+    const tasks: Record<string, Task> = {};
+    for (const taskId in filteredTasks) {
+      if (filteredTasks[taskId].completed === true) {
+        tasks[taskId] = filteredTasks[taskId];
+      }
+    }
+    return tasks;
+  };
+
+  const tasksFiltered = (): Record<string, Task> => {
     const filteredTasks: Record<string, Task> = {};
 
+    if (search.value === '') return tasks.value;
+
     for (const taskId in tasks.value) {
-      if (tasks.value[taskId].completed === true) {
+      if (
+        tasks.value[taskId].name
+          .toLowerCase()
+          .includes(search.value.toLocaleLowerCase())
+      ) {
         filteredTasks[taskId] = tasks.value[taskId];
       }
     }
@@ -80,6 +100,8 @@ export const useTasksStore = defineStore('tasks', () => {
 
   return {
     showModalAddTask,
+    search,
+    tasksFiltered,
     setShowAddTask,
     tasksTodo,
     tasksCompleted,
