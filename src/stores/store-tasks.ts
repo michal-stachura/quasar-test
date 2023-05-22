@@ -12,7 +12,7 @@ export const useTasksStore = defineStore('tasks', () => {
     },
     ID2: {
       name: 'Go to GYM!',
-      completed: false,
+      completed: true,
       dueDate: '2023-06-08',
       dueTime: '11:20'
     },
@@ -23,6 +23,35 @@ export const useTasksStore = defineStore('tasks', () => {
       dueTime: '15:00'
     }
   });
+
+  const showModalAddTask = ref(false);
+
+  const setShowAddTask = (trueOrFalse: boolean): void => {
+    showModalAddTask.value = trueOrFalse;
+  };
+
+  const tasksTodo = () => {
+    const filteredTasks: Record<string, Task> = {};
+
+    for (const taskId in tasks.value) {
+      if (tasks.value[taskId].completed === false) {
+        filteredTasks[taskId] = tasks.value[taskId];
+      }
+    }
+    return filteredTasks;
+  };
+
+  const tasksCompleted = () => {
+    const filteredTasks: Record<string, Task> = {};
+
+    for (const taskId in tasks.value) {
+      if (tasks.value[taskId].completed === true) {
+        filteredTasks[taskId] = tasks.value[taskId];
+      }
+    }
+
+    return filteredTasks;
+  };
 
   function getNextID(): string {
     const taskIDs = Object.keys(tasks.value);
@@ -49,5 +78,14 @@ export const useTasksStore = defineStore('tasks', () => {
     tasks.value[taskId] = task;
   }
 
-  return { tasks, toggleTask, deleteTask, addTask, editTask };
+  return {
+    showModalAddTask,
+    setShowAddTask,
+    tasksTodo,
+    tasksCompleted,
+    toggleTask,
+    deleteTask,
+    addTask,
+    editTask
+  };
 });

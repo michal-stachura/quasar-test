@@ -1,41 +1,34 @@
 <template>
   <q-page padding>
-    <div v-if="Object.keys(tasks).length">
-      <q-list bordered separator>
-        <TaskItem
-          v-for="(task, key) in tasks"
-          :key="key"
-          :task="task"
-          :task-id="key"
-        />
-      </q-list>
-    </div>
-    <div v-else>
-      <h5 class="text-center">Please add first task.</h5>
-    </div>
+    <no-tasks v-if="!Object.keys(tasksTodo()).length" />
+    <TasksTodo v-else />
+    <tasks-completed />
+
     <div class="absolute-bottom-right q-mb-sm q-mr-sm">
       <q-btn
         round
         color="positive"
         size="lg"
         icon="add"
-        @click="showAddTask = true"
+        @click="setShowAddTask(true)"
       />
     </div>
 
-    <q-dialog v-model="showAddTask">
-      <add-task @close-popup="showAddTask = false" />
+    <q-dialog v-model="showModalAddTask">
+      <add-task @close-popup="setShowAddTask(false)" />
     </q-dialog>
   </q-page>
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import { useTasksStore } from '../stores/store-tasks';
-  import TaskItem from 'components/Tasks/TaskItem.vue';
+  import { storeToRefs } from 'pinia';
   import AddTask from 'components/Tasks/Modals/AddTask.vue';
-
+  import TasksTodo from 'components/Tasks/TasksTodo.vue';
+  import TasksCompleted from 'components/Tasks/TasksCompleted.vue';
+  import NoTasks from 'src/components/Tasks/NoTasks.vue';
+  import { useTasksStore } from 'src/stores/store-tasks';
   const store = useTasksStore();
-  const showAddTask = ref<boolean>(false);
-  const { tasks } = store;
+  const { tasksTodo, setShowAddTask } = store;
+
+  const { showModalAddTask } = storeToRefs(store);
 </script>
