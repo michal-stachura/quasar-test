@@ -8,6 +8,7 @@
     label="Task Name"
     class="col"
     :rules="[(val) => !!val || 'Field is required']"
+    v-highlight
   />
 </template>
 

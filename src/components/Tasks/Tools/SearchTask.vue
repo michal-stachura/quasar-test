@@ -2,9 +2,11 @@
   <q-input
     v-model="search"
     @update:model-value="tasksFiltered()"
+    @keyup.esc="search = ''"
     filled
     label="Search"
     class="col"
+    v-highlight
   >
     <template v-slot:append>
       <q-icon
