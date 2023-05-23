@@ -7,6 +7,7 @@
       'bg-orange-1': !task.completed,
       'bg-green-1': task.completed
     }"
+    v-touch-hold:1000.mouse="showEditTaskModal"
   >
     <q-item-section side top>
       <q-checkbox
@@ -16,9 +17,9 @@
       />
     </q-item-section>
     <q-item-section>
-      <q-item-label :class="{ 'text-strike': task.completed }">{{
-        task.name
-      }}</q-item-label>
+      <q-item-label :class="{ 'text-strike': task.completed }">
+        <span v-html="$searchHighlight(search, task.name)"></span>
+      </q-item-label>
     </q-item-section>
     <q-item-section side v-if="task.dueDate">
       <div class="row">
@@ -27,7 +28,7 @@
         </div>
         <div class="column">
           <q-item-label class="row justify-end" caption>{{
-            task.dueDate
+            $niceDate(task.dueDate)
           }}</q-item-label>
           <q-item-label class="row justify-end" caption>{{
             task.dueTime
@@ -38,7 +39,7 @@
     <q-item-section side>
       <div class="row">
         <q-btn
-          @click.stop="showEditTask = true"
+          @click.stop="showEditTaskModal"
           flat
           round
           dense
@@ -71,11 +72,13 @@
   import { Task } from '../../types/Task';
   import { useTasksStore } from '../../stores/store-tasks';
   import { useQuasar } from 'quasar';
+  import { storeToRefs } from 'pinia';
   import EditTask from 'components/Tasks/Modals/EditTask.vue';
 
   const store = useTasksStore();
   const { toggleTask, deleteTask } = store;
   const $q = useQuasar();
+  const { search } = storeToRefs(store);
 
   const props = defineProps({
     task: {
@@ -89,6 +92,10 @@
   });
   const completed = ref(props.task.completed);
   const showEditTask = ref<boolean>(false);
+
+  const showEditTaskModal = () => {
+    showEditTask.value = true;
+  };
 
   const toggleCompleted = () => {
     completed.value = !completed.value;
