@@ -27,6 +27,7 @@ export const useTasksStore = defineStore('tasks', () => {
   const showModalAddTask = ref<boolean>(false);
 
   const search = ref<string>('');
+  const sort = ref<string>('dueDate');
 
   const setShowAddTask = (trueOrFalse: boolean): void => {
     showModalAddTask.value = trueOrFalse;
@@ -55,18 +56,43 @@ export const useTasksStore = defineStore('tasks', () => {
     return tasks;
   };
 
+  const tasksSortedByAttr = (): Record<string, Task> => {
+    const tasksOrdered: Record<string, Task> = {};
+    const keysOrdered = Object.keys(tasks.value);
+
+    keysOrdered.sort((a, b) => {
+      const taskAProp =
+        typeof sort.value === 'string'
+          ? (tasks.value[a][sort.value] as string).toLocaleLowerCase()
+          : '';
+      const taskBProp =
+        typeof sort.value === 'string'
+          ? (tasks.value[b][sort.value] as string).toLocaleLowerCase()
+          : '';
+
+      if (taskAProp > taskBProp) return 1;
+      else if (taskAProp < taskBProp) return -1;
+      else return 0;
+    });
+    keysOrdered.forEach((taskId) => {
+      tasksOrdered[taskId] = tasks.value[taskId];
+    });
+    return tasksOrdered;
+  };
+
   const tasksFiltered = (): Record<string, Task> => {
+    const tasksSorted: Record<string, Task> = tasksSortedByAttr();
     const filteredTasks: Record<string, Task> = {};
 
-    if (search.value === '') return tasks.value;
+    if (search.value === '') return tasksSorted;
 
-    for (const taskId in tasks.value) {
+    for (const taskId in tasksSorted) {
       if (
-        tasks.value[taskId].name
+        tasksSorted[taskId].name
           .toLowerCase()
           .includes(search.value.toLocaleLowerCase())
       ) {
-        filteredTasks[taskId] = tasks.value[taskId];
+        filteredTasks[taskId] = tasksSorted[taskId];
       }
     }
 
@@ -101,6 +127,8 @@ export const useTasksStore = defineStore('tasks', () => {
   return {
     showModalAddTask,
     search,
+    sort,
+    tasksSortedByAttr,
     tasksFiltered,
     setShowAddTask,
     tasksTodo,

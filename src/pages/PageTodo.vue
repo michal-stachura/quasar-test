@@ -1,7 +1,8 @@
 <template>
   <q-page padding>
-    <div class="q-mb-lg">
+    <div class="q-mb-lg row">
       <search-task />
+      <sort-tasks />
     </div>
     <p
       v-if="
@@ -40,6 +41,7 @@
   import TasksCompleted from 'components/Tasks/TasksCompleted.vue';
   import NoTasks from 'components/Tasks/NoTasks.vue';
   import SearchTask from 'components/Tasks/Tools/SearchTask.vue';
+  import SortTasks from 'components/Tasks/Tools/SortTasks.vue';
 
   const store = useTasksStore();
   const { tasksTodo, tasksCompleted, setShowAddTask } = store;
