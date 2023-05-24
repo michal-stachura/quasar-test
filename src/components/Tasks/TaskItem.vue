@@ -31,7 +31,7 @@
             $niceDate(task.dueDate)
           }}</q-item-label>
           <q-item-label class="row justify-end" caption>{{
-            task.dueTime
+            taskDueTime
           }}</q-item-label>
         </div>
       </div>
@@ -70,15 +70,19 @@
 <script setup lang="ts">
   import { ref, PropType } from 'vue';
   import { Task } from '../../types/Task';
-  import { useTasksStore } from '../../stores/store-tasks';
-  import { useQuasar } from 'quasar';
+  import { useTasksStore } from 'src/stores/store-tasks';
+  import { useSettingsStore } from 'src/stores/store-settings';
+  import { date, useQuasar } from 'quasar';
   import { storeToRefs } from 'pinia';
+  import { computed } from 'vue';
   import EditTask from 'components/Tasks/Modals/EditTask.vue';
 
   const store = useTasksStore();
+  const settingsStore = useSettingsStore();
   const { toggleTask, deleteTask } = store;
   const $q = useQuasar();
   const { search } = storeToRefs(store);
+  const { show12HourTimeFormat } = storeToRefs(settingsStore);
 
   const props = defineProps({
     task: {
@@ -92,6 +96,14 @@
   });
   const completed = ref(props.task.completed);
   const showEditTask = ref<boolean>(false);
+
+  const taskDueTime = computed(() => {
+    if (show12HourTimeFormat.value) {
+      const dateToChange = `${props.task.dueDate} ${props.task.dueTime}`;
+      return date.formatDate(dateToChange, 'h:mm A');
+    }
+    return props.task.dueTime;
+  });
 
   const showEditTaskModal = () => {
     showEditTask.value = true;
