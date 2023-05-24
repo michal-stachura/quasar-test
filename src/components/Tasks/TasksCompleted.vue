@@ -1,19 +1,25 @@
 <template>
-  <div class="q-mt-lg" v-if="Object.keys(tasksCompleted()).length">
-    <list-header
-      :count="Object.keys(tasksCompleted()).length"
-      :bg-class="'bg-green-10'"
-      >Tasks completed</list-header
-    >
-    <q-list bordered separator>
-      <task-item
-        v-for="(task, key) in tasksCompleted()"
-        :key="key"
-        :task="task"
-        :task-id="key"
-      />
-    </q-list>
-  </div>
+  <transition
+    appear
+    enter-active-class="animated zoomIn"
+    leave-active-class="animated zoomOut"
+  >
+    <div class="q-mt-lg" v-if="Object.keys(tasksCompleted()).length">
+      <list-header
+        :count="Object.keys(tasksCompleted()).length"
+        :bg-class="'bg-green-10'"
+        >Tasks completed</list-header
+      >
+      <q-list bordered separator>
+        <task-item
+          v-for="(task, key) in tasksCompleted()"
+          :key="key"
+          :task="task"
+          :task-id="key"
+        />
+      </q-list>
+    </div>
+  </transition>
 </template>
 
 <script setup lang="ts">

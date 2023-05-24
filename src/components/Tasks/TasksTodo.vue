@@ -1,19 +1,25 @@
 <template>
-  <div>
-    <list-header
-      :count="Object.keys(tasksTodo()).length"
-      :bg-class="'bg-orange-10'"
-      >Undone tasks</list-header
-    >
-    <q-list bordered separator>
-      <task-item
-        v-for="(task, key) in tasksTodo()"
-        :key="key"
-        :task="task"
-        :task-id="key"
-      />
-    </q-list>
-  </div>
+  <transition
+    appear
+    enter-active-class="animated zoomIn"
+    leave-active-class="animated zoomOut absolute-top"
+  >
+    <div>
+      <list-header
+        :count="Object.keys(tasksTodo()).length"
+        :bg-class="'bg-orange-10'"
+        >Undone tasks</list-header
+      >
+      <q-list bordered separator>
+        <task-item
+          v-for="(task, key) in tasksTodo()"
+          :key="key"
+          :task="task"
+          :task-id="key"
+        />
+      </q-list>
+    </div>
+  </transition>
 </template>
 
 <script setup lang="ts">

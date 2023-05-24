@@ -21,6 +21,60 @@ export const useTasksStore = defineStore('tasks', () => {
       completed: false,
       dueDate: '2023-06-12',
       dueTime: '15:00'
+    },
+    ID4: {
+      name: 'Go to shop',
+      completed: false,
+      dueDate: '2023-05-30',
+      dueTime: '14:30'
+    },
+    ID5: {
+      name: 'Go to GYM!',
+      completed: true,
+      dueDate: '2023-06-08',
+      dueTime: '11:20'
+    },
+    ID6: {
+      name: 'Bake a cake for birthday party',
+      completed: false,
+      dueDate: '2023-06-12',
+      dueTime: '15:00'
+    },
+    ID7: {
+      name: 'Go to shop',
+      completed: false,
+      dueDate: '2023-05-30',
+      dueTime: '14:30'
+    },
+    ID8: {
+      name: 'Go to GYM!',
+      completed: true,
+      dueDate: '2023-06-08',
+      dueTime: '11:20'
+    },
+    ID9: {
+      name: 'Bake a cake for birthday party',
+      completed: false,
+      dueDate: '2023-06-12',
+      dueTime: '15:00'
+    },
+    ID10: {
+      name: 'Go to shop',
+      completed: false,
+      dueDate: '2023-05-30',
+      dueTime: '14:30'
+    },
+    ID11: {
+      name: 'Go to GYM!',
+      completed: true,
+      dueDate: '2023-06-08',
+      dueTime: '11:20'
+    },
+    ID12: {
+      name: 'Bake a cake for birthday party',
+      completed: false,
+      dueDate: '2023-06-12',
+      dueTime: '15:00'
     }
   });
 

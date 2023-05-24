@@ -23,11 +23,9 @@ export function onSubmit(
 }
 
 export function updateDate(taskToSubmit: Task, newDate: string) {
-  console.log(newDate);
   taskToSubmit.dueDate = newDate;
 }
 
 export function updateTime(taskToSubmit: Task, newTime: string) {
-  console.log(newTime);
   taskToSubmit.dueTime = newTime;
 }

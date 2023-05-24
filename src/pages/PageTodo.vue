@@ -1,32 +1,37 @@
 <template>
-  <q-page padding>
-    <div class="q-mb-lg row">
-      <search-task />
-      <sort-tasks />
-    </div>
-    <p
-      v-if="
-        !Object.keys(tasksTodo()).length &&
-        !Object.keys(tasksCompleted()).length &&
-        search
-      "
-    >
-      No search results
-    </p>
-    <no-tasks v-if="!Object.keys(tasksTodo()).length && !search" />
-    <TasksTodo v-if="Object.keys(tasksTodo()).length" />
-    <TasksCompleted />
+  <q-page>
+    <div class="q-pa-md absolute full-width full-height column">
+      <div class="q-mb-lg row">
+        <search-task />
+        <sort-tasks />
+      </div>
 
-    <div class="absolute-bottom-right q-mb-sm q-mr-sm">
-      <q-btn
-        round
-        color="positive"
-        size="lg"
-        icon="add"
-        @click="setShowAddTask(true)"
-      />
-    </div>
+      <p
+        v-if="
+          !Object.keys(tasksTodo()).length &&
+          !Object.keys(tasksCompleted()).length &&
+          search
+        "
+      >
+        No search results
+      </p>
+      <q-scroll-area class="q-scroll-area-tasks">
+        <no-tasks v-if="!Object.keys(tasksTodo()).length && !search" />
+        <TasksTodo v-if="Object.keys(tasksTodo()).length" />
+        <TasksCompleted class="q-mb-xl" />
+      </q-scroll-area>
 
+      <div class="absolute-bottom text-center q-mb-lg no-pointer-events">
+        <q-btn
+          round
+          class="all-pointer-events"
+          color="positive"
+          size="lg"
+          icon="add"
+          @click="setShowAddTask(true)"
+        />
+      </div>
+    </div>
     <q-dialog v-model="showModalAddTask">
       <add-task @close-popup="setShowAddTask(false)" />
     </q-dialog>
@@ -48,3 +53,10 @@
 
   const { showModalAddTask, search } = storeToRefs(store);
 </script>
+
+<style lang="scss">
+  .q-scroll-area-tasks {
+    display: flex;
+    flex-grow: 1;
+  }
+</style>
