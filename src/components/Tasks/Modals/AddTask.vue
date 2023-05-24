@@ -1,6 +1,6 @@
 <template>
   <q-card>
-    <q-form @submit="onSubmit">
+    <q-form @submit="onSubmit(taskToSubmit, submitTask, $q)">
       <modal-header>Add task</modal-header>
 
       <q-card-section class="q-pt-none">
@@ -15,8 +15,8 @@
           <modal-task-due-date
             :dueDate="taskToSubmit.dueDate"
             v-model="taskToSubmit.dueDate"
-            @update-date="updateDate"
-            @clear-date="clearDate"
+            @update-date="updateDate(taskToSubmit, $event)"
+            @clear-date="clearDate(taskToSubmit)"
           />
         </div>
 
@@ -24,7 +24,7 @@
           <modal-task-due-time
             :dueTime="taskToSubmit.dueTime"
             v-model="taskToSubmit.dueTime"
-            @update-time="updateTime"
+            @update-time="updateTime(taskToSubmit, $event)"
             @clear-time="taskToSubmit.dueTime = ''"
           />
         </div>
@@ -45,6 +45,13 @@
   import ModalTaskDueTime from './Shared/ModalTaskDueTime.vue';
   import ModalButtons from './Shared/ModalButtons.vue';
 
+  import {
+    clearDate,
+    onSubmit,
+    updateTime,
+    updateDate
+  } from 'src/composables/add-edit-task';
+
   const store = useTasksStore();
   const { addTask } = store;
   const $q = useQuasar();
@@ -56,32 +63,6 @@
     dueTime: '',
     completed: false
   });
-
-  const clearDate = () => {
-    taskToSubmit.dueDate = '';
-    taskToSubmit.dueTime = '';
-  };
-
-  const updateDate = (newDate: string): void => {
-    taskToSubmit.dueDate = newDate;
-  };
-
-  const updateTime = (newTime: string): void => {
-    taskToSubmit.dueTime = newTime;
-  };
-
-  const onSubmit = () => {
-    if (taskToSubmit.name.trim() === '') {
-      $q.notify({
-        color: 'red-5',
-        textColor: 'white',
-        icon: 'warning',
-        message: 'Please provide task name.'
-      });
-    } else {
-      submitTask();
-    }
-  };
 
   const submitTask = () => {
     addTask(taskToSubmit);

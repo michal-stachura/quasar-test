@@ -18,6 +18,7 @@
           <q-time
             v-model="time"
             @update:model-value="$emit('update-time', time)"
+            emit-immediately
             format24h
           >
             <div class="row items-center justify-end">
