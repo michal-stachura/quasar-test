@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div class="q-pa-md absolute full-width full-height column">
+    <div class="q-pa-sm absolute full-width full-height column">
       <div class="q-mb-lg row">
         <search-task />
         <sort-tasks />
@@ -16,7 +16,13 @@
         No search results
       </p>
       <q-scroll-area class="q-scroll-area-tasks">
-        <no-tasks v-if="!Object.keys(tasksTodo()).length && !search" />
+        <no-tasks
+          v-if="
+            !Object.keys(tasksTodo()).length &&
+            !search &&
+            !settings.showTasksInOneList
+          "
+        />
         <TasksTodo v-if="Object.keys(tasksTodo()).length" />
         <TasksCompleted class="q-mb-xl" />
       </q-scroll-area>
@@ -41,6 +47,7 @@
 <script setup lang="ts">
   import { storeToRefs } from 'pinia';
   import { useTasksStore } from 'src/stores/store-tasks';
+  import { useSettingsStore } from 'src/stores/store-settings';
   import AddTask from 'components/Tasks/Modals/AddTask.vue';
   import TasksTodo from 'components/Tasks/TasksTodo.vue';
   import TasksCompleted from 'components/Tasks/TasksCompleted.vue';
@@ -49,9 +56,11 @@
   import SortTasks from 'components/Tasks/Tools/SortTasks.vue';
 
   const store = useTasksStore();
+  const settingsStore = useSettingsStore();
   const { tasksTodo, tasksCompleted, setShowAddTask } = store;
 
   const { showModalAddTask, search } = storeToRefs(store);
+  const { settings } = settingsStore;
 </script>
 
 <style lang="scss">

@@ -82,7 +82,7 @@
   const { toggleTask, deleteTask } = store;
   const $q = useQuasar();
   const { search } = storeToRefs(store);
-  const { show12HourTimeFormat } = storeToRefs(settingsStore);
+  const { settings } = settingsStore;
 
   const props = defineProps({
     task: {
@@ -98,7 +98,7 @@
   const showEditTask = ref<boolean>(false);
 
   const taskDueTime = computed(() => {
-    if (show12HourTimeFormat.value) {
+    if (settings.show12HourTimeFormat) {
       const dateToChange = `${props.task.dueDate} ${props.task.dueTime}`;
       return date.formatDate(dateToChange, 'h:mm A');
     }
