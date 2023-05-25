@@ -18,12 +18,11 @@
 
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="login">
-          <div class="text-h6">Login</div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <login-register-user :tab="tab" />
         </q-tab-panel>
 
         <q-tab-panel name="register">
-          <register-user />
+          <login-register-user :tab="tab" />
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
@@ -32,9 +31,9 @@
 
 <script setup lang="ts">
   import { ref } from 'vue';
-  import RegisterUser from 'components/Auth/RegisterUser.vue';
+  import LoginRegisterUser from 'components/Auth/LoginRegisterUser.vue';
 
-  const tab = ref<string>('register');
+  const tab = ref<string>('login');
 </script>
 
 <style lang="scss">
