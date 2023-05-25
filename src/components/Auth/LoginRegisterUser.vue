@@ -66,9 +66,13 @@
 <script setup lang="ts">
   import { PropType, reactive, ref } from 'vue';
   import { useQuasar } from 'quasar';
+  import { RegisterUser, User } from 'src/types/User';
+  import { useAuthStore } from 'src/stores/store-auth';
 
+  const authStore = useAuthStore();
+  const { registerUser } = authStore;
   const $q = useQuasar();
-  const formData = reactive({
+  const formData = reactive<User>({
     email: '',
     password: '',
     terms: false
@@ -100,7 +104,18 @@
           message: 'You need to accept the license and terms first'
         });
       } else {
-        console.log('register User');
+        if (
+          formData.terms &&
+          formData.password &&
+          formData.password.length > 0
+        ) {
+          const payload: RegisterUser = {
+            ...formData,
+            password: formData.password,
+            terms: formData.terms
+          };
+          registerUser(payload);
+        }
       }
     }
   };
