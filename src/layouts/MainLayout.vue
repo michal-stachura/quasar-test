@@ -4,11 +4,20 @@
       <q-toolbar>
         <q-toolbar-title class="absolute-center"> Todo app </q-toolbar-title>
         <q-btn
+          v-if="!loggedIn"
           to="/auth"
           class="absolute-right"
           flat
           icon-right="account_circle"
           label="Login"
+        />
+        <q-btn
+          v-else
+          @click="signOut"
+          class="absolute-right"
+          flat
+          icon-right="account_circle"
+          label="Logout"
         />
       </q-toolbar>
     </q-header>
@@ -54,6 +63,13 @@
 
 <script setup lang="ts">
   import EssentialLink from 'components/EssentialLink.vue';
+  import { storeToRefs } from 'pinia';
+  import { useAuthStore } from 'src/stores/store-auth';
+
+  const authStore = useAuthStore();
+
+  const { loggedIn } = storeToRefs(authStore);
+  const { signOut } = authStore;
 
   const essentialLinks = [
     {

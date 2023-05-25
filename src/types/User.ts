@@ -9,3 +9,8 @@ export interface RegisterUser {
   password: string;
   terms: boolean;
 }
+
+export interface LoginUser {
+  email: string;
+  password: string;
+}

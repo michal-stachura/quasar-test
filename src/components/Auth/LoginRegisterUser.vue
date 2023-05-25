@@ -66,11 +66,11 @@
 <script setup lang="ts">
   import { PropType, reactive, ref } from 'vue';
   import { useQuasar } from 'quasar';
-  import { RegisterUser, User } from 'src/types/User';
+  import { LoginUser, RegisterUser, User } from 'src/types/User';
   import { useAuthStore } from 'src/stores/store-auth';
 
   const authStore = useAuthStore();
-  const { registerUser } = authStore;
+  const { registerUser, loginUser } = authStore;
   const $q = useQuasar();
   const formData = reactive<User>({
     email: '',
@@ -94,7 +94,13 @@
 
   const submitForm = () => {
     if (props.tab === 'login') {
-      console.log('Login User');
+      if (formData.password) {
+        const payload: LoginUser = {
+          email: formData.email,
+          password: formData.password
+        };
+        loginUser(payload);
+      }
     } else {
       if (formData.terms !== true) {
         $q.notify({
