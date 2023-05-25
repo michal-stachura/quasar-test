@@ -16,6 +16,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/settings/help',
         component: () => import('src/pages/PageHelp.vue')
+      },
+      {
+        path: '/auth',
+        component: () => import('src/pages/PageAuth.vue')
       }
     ]
   },
