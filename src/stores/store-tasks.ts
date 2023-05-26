@@ -1,33 +1,49 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { Task } from '../types/Task';
+import { firebaseDb, firebaseAuth } from 'src/boot/firebase';
 
 export const useTasksStore = defineStore('tasks', () => {
-  const tasks = ref<Record<string, Task>>({
-    ID1: {
-      name: 'Go to shop',
-      completed: false,
-      dueDate: '2023-05-30',
-      dueTime: '14:30'
-    },
-    ID2: {
-      name: 'Go to GYM!',
-      completed: true,
-      dueDate: '2023-06-08',
-      dueTime: '11:20'
-    },
-    ID3: {
-      name: 'Bake a cake for birthday party',
-      completed: false,
-      dueDate: '2023-06-12',
-      dueTime: '15:00'
-    }
-  });
+  const tasks = ref<Record<string, Task>>({});
 
   const showModalAddTask = ref<boolean>(false);
 
   const search = ref<string>('');
   const sort = ref<string>('dueDate');
+
+  const fbReadData = (): void => {
+    const userId: string | undefined =
+      firebaseAuth.currentUser?.uid || undefined;
+    if (userId) {
+      const usersTasks = firebaseDb.ref(`tasks/${userId}`);
+
+      // child added
+      usersTasks.on('child_added', (snapshot) => {
+        const task = snapshot.val() as Task;
+        const taskId = snapshot.key;
+        if (taskId && task) {
+          addTask(taskId, task);
+        }
+      });
+
+      // child edited
+      usersTasks.on('child_changed', (snapshot) => {
+        const task = snapshot.val() as Task;
+        const taskId = snapshot.key;
+        if (taskId && task) {
+          editTask(taskId, task);
+        }
+      });
+
+      // child removed
+      usersTasks.on('child_removed', (snapshot) => {
+        const taskId = snapshot.key;
+        if (taskId) {
+          deleteTask(taskId);
+        }
+      });
+    }
+  };
 
   const setShowAddTask = (trueOrFalse: boolean): void => {
     showModalAddTask.value = trueOrFalse;
@@ -61,22 +77,39 @@ export const useTasksStore = defineStore('tasks', () => {
     const keysOrdered = Object.keys(tasks.value);
 
     keysOrdered.sort((a, b) => {
-      const taskAProp =
-        typeof sort.value === 'string'
-          ? (tasks.value[a][sort.value] as string).toLocaleLowerCase()
-          : '';
-      const taskBProp =
-        typeof sort.value === 'string'
-          ? (tasks.value[b][sort.value] as string).toLocaleLowerCase()
-          : '';
+      const taskA: Task = tasks.value[a];
+      const taskB: Task = tasks.value[b];
 
-      if (taskAProp > taskBProp) return 1;
-      else if (taskAProp < taskBProp) return -1;
-      else return 0;
+      const taskAProp = taskA[sort.value as keyof Task];
+      const taskBProp = taskB[sort.value as keyof Task];
+
+      if (taskAProp !== undefined && taskBProp !== undefined) {
+        if (typeof taskAProp === 'string' && typeof taskBProp === 'string') {
+          const taskAPropLower = taskAProp.toLocaleLowerCase();
+          const taskBPropLower = taskBProp.toLocaleLowerCase();
+
+          if (taskAPropLower > taskBPropLower) return 1;
+          else if (taskAPropLower < taskBPropLower) return -1;
+        } else if (
+          typeof taskAProp === 'boolean' &&
+          typeof taskBProp === 'boolean'
+        ) {
+          if (taskAProp && !taskBProp) return 1;
+          else if (!taskAProp && taskBProp) return -1;
+        } // Add more conditions for different types if necessary
+      } else if (taskAProp === undefined && taskBProp !== undefined) {
+        return -1;
+      } else if (taskAProp !== undefined && taskBProp === undefined) {
+        return 1;
+      }
+
+      return 0;
     });
+
     keysOrdered.forEach((taskId) => {
       tasksOrdered[taskId] = tasks.value[taskId];
     });
+
     return tasksOrdered;
   };
 
@@ -99,14 +132,6 @@ export const useTasksStore = defineStore('tasks', () => {
     return filteredTasks;
   };
 
-  function getNextID(): string {
-    const taskIDs = Object.keys(tasks.value);
-    const lastID =
-      taskIDs.length > 0 ? parseInt(taskIDs[taskIDs.length - 1].slice(2)) : 0;
-    const nextID = lastID + 1;
-    return 'ID' + nextID;
-  }
-
   function toggleTask(taskId: string): void {
     tasks.value[taskId].completed = !tasks.value[taskId].completed;
   }
@@ -115,8 +140,7 @@ export const useTasksStore = defineStore('tasks', () => {
     delete tasks.value[taskId];
   }
 
-  function addTask(task: Task): void {
-    const taskId = getNextID();
+  function addTask(taskId: string, task: Task): void {
     tasks.value[taskId] = task;
   }
 
@@ -136,6 +160,7 @@ export const useTasksStore = defineStore('tasks', () => {
     toggleTask,
     deleteTask,
     addTask,
-    editTask
+    editTask,
+    fbReadData
   };
 });

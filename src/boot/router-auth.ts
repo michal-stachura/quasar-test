@@ -1,7 +1,7 @@
 import { boot } from 'quasar/wrappers';
 import { LocalStorage } from 'quasar';
 
-export default boot(async ({ router }) => {
+export default boot(({ router }) => {
   router.beforeEach((to) => {
     const loggedIn = LocalStorage.getItem('loggedIn');
 

@@ -1,13 +1,16 @@
 import { defineStore } from 'pinia';
 import { RegisterUser, LoginUser } from 'src/types/User';
-import { firebaseAuth } from 'src/boot/firebase';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { LocalStorage, Loading } from 'quasar';
 import { showErrorMessage } from 'src/composables/show-error-message';
+import { useTasksStore } from './store-tasks';
+import { firebaseAuth } from 'src/boot/firebase';
 
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter();
+  const tasksStore = useTasksStore();
+  const { fbReadData } = tasksStore;
 
   const loggedIn = ref<boolean>(false);
 
@@ -55,6 +58,7 @@ export const useAuthStore = defineStore('auth', () => {
         router.push('/').catch((error: Error) => {
           showErrorMessage(error.message);
         });
+        fbReadData();
       } else {
         loggedIn.value = false;
         LocalStorage.set('loggedIn', false);
