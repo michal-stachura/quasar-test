@@ -36,8 +36,8 @@
 
   const props = defineProps({
     dueDate: {
-      type: String as PropType<string>,
-      required: true
+      type: String as PropType<string | undefined>,
+      required: false
     }
   });
 

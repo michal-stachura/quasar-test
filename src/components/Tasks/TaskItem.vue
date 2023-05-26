@@ -79,7 +79,7 @@
 
   const store = useTasksStore();
   const settingsStore = useSettingsStore();
-  const { toggleTask, deleteTask } = store;
+  const { fbToggleTask, fbDeleteTask } = store;
   const $q = useQuasar();
   const { search } = storeToRefs(store);
   const { settings } = settingsStore;
@@ -111,7 +111,7 @@
 
   const toggleCompleted = () => {
     completed.value = !completed.value;
-    toggleTask(props.taskId);
+    fbToggleTask(props.taskId);
   };
 
   const promptToDelete = (taskId: string) => {
@@ -124,7 +124,7 @@
       cancel: true,
       persistent: true
     }).onOk(() => {
-      deleteTask(taskId);
+      fbDeleteTask(taskId);
     });
   };
 </script>

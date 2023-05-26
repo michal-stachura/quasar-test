@@ -53,7 +53,7 @@
   } from 'src/composables/add-edit-task';
 
   const store = useTasksStore();
-  const { addTask } = store;
+  const { fbAddTask } = store;
   const $q = useQuasar();
   const emit = defineEmits(['close-popup']);
 
@@ -65,7 +65,7 @@
   });
 
   const submitTask = () => {
-    addTask(taskToSubmit);
+    fbAddTask(taskToSubmit);
     $q.notify({
       color: 'green-4',
       textColor: 'white',
