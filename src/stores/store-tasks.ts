@@ -2,12 +2,17 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { Task } from '../types/Task';
 import { firebaseDb, firebaseAuth } from 'src/boot/firebase';
-import { uid } from 'quasar';
+import { uid, useQuasar } from 'quasar';
+import { showErrorMessage } from 'src/composables/show-error-message';
+import { useRouter } from 'vue-router';
 
 export const useTasksStore = defineStore('tasks', () => {
+  const $q = useQuasar();
+  const router = useRouter();
   const tasks = ref<Record<string, Task>>({});
 
   const showModalAddTask = ref<boolean>(false);
+  const tasksDownloaded = ref<boolean>(false);
 
   const search = ref<string>('');
   const sort = ref<string>('dueDate');
@@ -16,30 +21,50 @@ export const useTasksStore = defineStore('tasks', () => {
     const id = uid();
     const userId: string | undefined =
       firebaseAuth.currentUser?.uid || undefined;
-
     if (userId && task) {
       const taskRef = firebaseDb.ref(`tasks/${userId}/${id}`);
-      taskRef.set(task);
-      tasks.value[id] = task;
+      taskRef.set(task, (error) => {
+        if (error) {
+          showErrorMessage(error.message);
+        } else {
+          $q.notify({
+            color: 'green-4',
+            textColor: 'white',
+            icon: 'cloud_done',
+            message: 'Task added'
+          });
+          tasks.value[id] = task;
+        }
+      });
     }
   };
 
   const fbEditTask = (id: string, updatedTask: Task): void => {
     const userId: string | undefined =
       firebaseAuth.currentUser?.uid || undefined;
-
     if (userId && id && updatedTask) {
       const taskRef = firebaseDb.ref(`tasks/${userId}/${id}`);
-      taskRef.update(updatedTask);
-      tasks.value[id] = updatedTask;
+      const taskBeforeChange = tasks.value[id];
+      taskRef.update(updatedTask, (error) => {
+        if (error) {
+          showErrorMessage(error.message);
+        } else {
+          if (taskBeforeChange.completed === updatedTask.completed) {
+            $q.notify({
+              color: 'green-4',
+              textColor: 'white',
+              icon: 'cloud_done',
+              message: 'Task changed'
+            });
+          }
+          tasks.value[id] = updatedTask;
+        }
+      });
     }
   };
 
   const fbToggleTask = (id: string): void => {
-    const userId: string | undefined =
-      firebaseAuth.currentUser?.uid || undefined;
-
-    if (userId && id) {
+    if (id) {
       const payload = {
         ...tasks.value[id],
         completed: !tasks.value[id]['completed']
@@ -49,22 +74,47 @@ export const useTasksStore = defineStore('tasks', () => {
     }
   };
 
-  const fbDeleteTask = (taskId: string): void => {
+  const fbDeleteTask = (id: string): void => {
     const userId: string | undefined =
       firebaseAuth.currentUser?.uid || undefined;
 
-    if (userId && taskId) {
-      const taskRef = firebaseDb.ref(`tasks/${userId}/${taskId}`);
-      taskRef.remove();
-      delete tasks.value[taskId];
+    if (userId && id) {
+      const taskRef = firebaseDb.ref(`tasks/${userId}/${id}`);
+      taskRef.remove((error) => {
+        if (error) {
+          showErrorMessage(error.message);
+        } else {
+          $q.notify({
+            color: 'green-4',
+            textColor: 'white',
+            icon: 'cloud_done',
+            message: 'Task deleted'
+          });
+          delete tasks.value[id];
+        }
+      });
     }
   };
 
   const fbReadData = (): void => {
     const userId: string | undefined =
       firebaseAuth.currentUser?.uid || undefined;
+
     if (userId) {
       const usersTasks = firebaseDb.ref(`tasks/${userId}`);
+
+      // Initial check for data
+      usersTasks.once(
+        'value',
+        () => {
+          setTasksDownloadedValue(true);
+        },
+        (error) => {
+          router.replace('/auth').then(() => {
+            showErrorMessage(error.message);
+          });
+        }
+      );
 
       // child added
       usersTasks.on('child_added', (snapshot) => {
@@ -181,10 +231,20 @@ export const useTasksStore = defineStore('tasks', () => {
     return filteredTasks;
   };
 
+  const setTasksDownloadedValue = (value: boolean): void => {
+    tasksDownloaded.value = value;
+  };
+
+  const clearTasks = (): void => {
+    tasks.value = {};
+  };
+
   return {
     showModalAddTask,
     search,
     sort,
+    tasksDownloaded,
+    setTasksDownloadedValue,
     tasksSortedByAttr,
     tasksFiltered,
     setShowAddTask,
@@ -194,6 +254,7 @@ export const useTasksStore = defineStore('tasks', () => {
     fbAddTask,
     fbEditTask,
     fbToggleTask,
-    fbDeleteTask
+    fbDeleteTask,
+    clearTasks
   };
 });

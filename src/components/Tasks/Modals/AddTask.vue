@@ -37,7 +37,6 @@
 
 <script setup lang="ts">
   import { reactive } from 'vue';
-  import { useQuasar } from 'quasar';
   import { useTasksStore } from '../../../stores/store-tasks';
   import ModalHeader from './Shared/ModalHeader.vue';
   import ModalTaskName from './Shared/ModalTaskName.vue';
@@ -54,7 +53,6 @@
 
   const store = useTasksStore();
   const { fbAddTask } = store;
-  const $q = useQuasar();
   const emit = defineEmits(['close-popup']);
 
   const taskToSubmit = reactive({
@@ -66,12 +64,6 @@
 
   const submitTask = () => {
     fbAddTask(taskToSubmit);
-    $q.notify({
-      color: 'green-4',
-      textColor: 'white',
-      icon: 'cloud_done',
-      message: 'Task added'
-    });
     emit('close-popup');
   };
 </script>

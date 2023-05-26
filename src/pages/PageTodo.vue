@@ -1,42 +1,51 @@
 <template>
   <q-page>
     <div class="q-pa-sm absolute full-width full-height column">
-      <div class="q-mb-lg row">
-        <search-task />
-        <sort-tasks />
-      </div>
+      <template v-if="tasksDownloaded">
+        <div class="q-mb-lg row">
+          <search-task />
+          <sort-tasks />
+        </div>
 
-      <p
-        v-if="
-          !Object.keys(tasksTodo()).length &&
-          !Object.keys(tasksCompleted()).length &&
-          search
-        "
-      >
-        No search results
-      </p>
-      <q-scroll-area class="q-scroll-area-tasks">
-        <no-tasks
+        <p
           v-if="
             !Object.keys(tasksTodo()).length &&
-            !search &&
-            !settings.showTasksInOneList
+            !Object.keys(tasksCompleted()).length &&
+            search
           "
-        />
-        <TasksTodo v-if="Object.keys(tasksTodo()).length" />
-        <TasksCompleted class="q-mb-xl" />
-      </q-scroll-area>
+        >
+          No search results
+        </p>
+        <q-scroll-area class="q-scroll-area-tasks">
+          <no-tasks
+            v-if="
+              Object.keys(tasksTodo()).length === 0 &&
+              !search &&
+              !settings.showTasksInOneList
+            "
+          />
+          <TasksTodo v-if="Object.keys(tasksTodo()).length" />
+          <TasksCompleted class="q-mb-xl" />
+        </q-scroll-area>
 
-      <div class="absolute-bottom text-center q-mb-lg no-pointer-events">
-        <q-btn
-          round
-          class="all-pointer-events"
-          color="positive"
-          size="lg"
-          icon="add"
-          @click="setShowAddTask(true)"
-        />
-      </div>
+        <div class="absolute-bottom text-center q-mb-lg no-pointer-events">
+          <q-btn
+            round
+            class="all-pointer-events"
+            color="positive"
+            size="lg"
+            icon="add"
+            @click="setShowAddTask(true)"
+          />
+        </div>
+      </template>
+
+      <template v-else>
+        <span class="absolute-center text-center">
+          <q-spinner color="primary" size="3em" />
+          <p>Loading tasks...</p>
+        </span>
+      </template>
     </div>
     <q-dialog v-model="showModalAddTask">
       <add-task @close-popup="setShowAddTask(false)" />
@@ -59,7 +68,7 @@
   const settingsStore = useSettingsStore();
   const { tasksTodo, tasksCompleted, setShowAddTask } = store;
 
-  const { showModalAddTask, search } = storeToRefs(store);
+  const { showModalAddTask, search, tasksDownloaded } = storeToRefs(store);
   const { settings } = settingsStore;
 </script>
 
