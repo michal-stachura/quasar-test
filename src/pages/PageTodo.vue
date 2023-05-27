@@ -76,5 +76,8 @@
   .q-scroll-area-tasks {
     display: flex;
     flex-grow: 1;
+    .scroll {
+      height: auto !important;
+    }
   }
 </style>
