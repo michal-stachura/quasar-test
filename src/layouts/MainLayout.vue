@@ -46,12 +46,27 @@
     >
       <q-list dark>
         <q-item-label header> Navigation </q-item-label>
-
         <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
           v-bind="link"
         />
+
+        <q-item
+          v-if="$q.platform.is.electron"
+          @click="quitApp"
+          clickable
+          exact
+          class="text-grey-4 absolute-bottom"
+        >
+          <q-item-section avatar>
+            <q-icon name="power_settings_new" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Quit</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -65,11 +80,26 @@
   import EssentialLink from 'components/EssentialLink.vue';
   import { storeToRefs } from 'pinia';
   import { useAuthStore } from 'src/stores/store-auth';
+  import { useQuasar } from 'quasar';
 
+  const $q = useQuasar();
   const authStore = useAuthStore();
 
   const { loggedIn } = storeToRefs(authStore);
   const { signOut } = authStore;
+
+  const quitApp = () => {
+    $q.dialog({
+      title: 'Confirm',
+      message: 'Would you like to close application?',
+      cancel: true,
+      persistent: true
+    }).onOk(() => {
+      if ($q.platform.is.electron) {
+        window.electron.ipcRenderer.send('quit-app');
+      }
+    });
+  };
 
   const essentialLinks = [
     {

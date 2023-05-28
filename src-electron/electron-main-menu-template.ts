@@ -28,7 +28,14 @@ export const menuTemplate = [
     submenu: [
       isMac ? { role: 'close' } : { role: 'quit' },
       {
+        label: 'Todo list',
+        click() {
+          mainWindow?.webContents.send('show-todo');
+        }
+      },
+      {
         label: 'Settings',
+        accelerator: 'CmdOrCtrl+,',
         click() {
           mainWindow?.webContents.send('show-settings');
         }

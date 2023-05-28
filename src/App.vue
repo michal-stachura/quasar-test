@@ -7,19 +7,22 @@
   import { useSettingsStore } from './stores/store-settings';
   import { useAuthStore } from './stores/store-auth';
   import { useRouter } from 'vue-router';
+  import { useQuasar } from 'quasar';
   const settingsStore = useSettingsStore();
   const authStore = useAuthStore();
+  const $q = useQuasar();
 
   const { getSettings } = settingsStore;
   const { handleAuthStateChange } = authStore;
   const router = useRouter();
 
   onMounted(() => {
-    if (window.electron) {
-      window.electron.ipcRenderer.on('show-settings', (event, arg) => {
-        // Tutaj wykonaj coś, kiedy otrzymasz komendę 'show-settings'
-        console.log(`Otrzymano komendę show-settings: ${event} - ${arg}`);
+    if ($q.platform.is.electron) {
+      window.electron.ipcRenderer.on('show-settings', () => {
         router.push('/settings');
+      });
+      window.electron.ipcRenderer.on('show-todo', () => {
+        router.push('/');
       });
     }
     getSettings();
@@ -27,8 +30,7 @@
   });
 
   onBeforeUnmount(() => {
-    if (window.electron) {
-      // Pamiętaj, aby usunąć nasłuchiwanie na wiadomości, kiedy komponent jest niszczony
+    if ($q.platform.is.electron) {
       window.electron.ipcRenderer.removeAllListeners('show-settings');
     }
   });
