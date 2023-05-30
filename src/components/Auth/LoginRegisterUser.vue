@@ -19,6 +19,7 @@
         label="Email"
         class="col"
         lazy-rules
+        type="email"
         :rules="[
           (val) =>
             isValidEmailAddress(val) || 'Please enter a valid email address'

@@ -1,7 +1,7 @@
 <template>
   <q-input
     filled
-    autofocus
+    v-autofocus="{ delayCordova: 700 }"
     clearable
     :model-value="name"
     @input="$emit('update:name', ($event.target as HTMLInputElement).value)"

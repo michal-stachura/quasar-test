@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
-    "icons": "icongenie generate -i src/icon/AppIcon.png --skip-trim",
+    "icons": "icongenie generate -i src/icon/AppIcon.png --skip-trim --theme-color 1c354e",
     "dev": "quasar dev",
     "electron": "quasar dev -m electron"
   },

@@ -79,5 +79,8 @@
     .scroll {
       height: auto !important;
     }
+    .mobile & {
+      flex-basis: 100px;
+    }
   }
 </style>

@@ -57,16 +57,31 @@
 <script setup lang="ts">
   import { useSettingsStore } from 'src/stores/store-settings';
   import { openURL } from 'quasar';
+  import { Platform } from 'quasar';
+  const $p = Platform;
 
   const store = useSettingsStore();
   const { settings } = store;
 
   const visitOurWebsite = () => {
-    openURL('https://santri.pl');
+    if ($p.is.android && $p.is.cordova) {
+      cordova.InAppBrowser.open('https://santri.pl', '_blank', 'location=yes');
+    } else {
+      openURL('https://santri.pl');
+    }
   };
 
   const emailUs = () => {
-    window.location.href =
-      'mailto:michal.stachura@santri.pl?subject=Todo App Feedback';
+    if ($p.is.android && $p.is.cordova) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      cordova.plugins.email.open({
+        to: 'michal.stachura@santri.pl',
+        subject: 'Todo App Feedback'
+      });
+    } else {
+      window.location.href =
+        'mailto:michal.stachura@santri.pl?subject=Todo App Feedback';
+    }
   };
 </script>

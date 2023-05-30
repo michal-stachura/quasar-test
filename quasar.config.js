@@ -34,6 +34,7 @@ module.exports = configure(function (ctx) {
       'router-auth',
       'firebase',
       'highlight-directive',
+      'autofocus-directive',
       'nice-date-filter',
       'search-highlight'
     ],
@@ -183,6 +184,15 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/developing-cordova-apps/configuring-cordova
     cordova: {
       // noIosLegacyBuildFlag: true, // uncomment only if you know what you are doing
+
+      beforeCordovaBuild({ quasarConf }) {
+        // add this beforeCordovaBuild hook
+        process.env.JAVA_HOME = '/usr/lib/jvm/java-8-openjdk-amd64/';
+      }
+    },
+
+    bin: {
+      linuxAndroidStudio: '/home/michal/android-studio/bin/studio.sh'
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/developing-capacitor-apps/configuring-capacitor
